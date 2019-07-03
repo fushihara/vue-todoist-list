@@ -1,10 +1,6 @@
 <template>
   <div style="height:100%;display:flex;flex-direction:column;background-color:white;">
-    <link
-      rel="stylesheet"
-      href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"
-    >
-    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <div style="flex:0 0 auto;">
       <button v-on:click="push_reload_button" v-bind:disabled="reload_button_disabled">再読込</button>
     </div>
@@ -16,30 +12,37 @@
       >
         <div style="display:flex;">
           <h2 style="flex:1 1 0;" v-html="item.content"></h2>
-          <div style="flex:0 0 30px;">
-            <md-menu md-direction="bottom left" md-size="6">
-              <md-button class="md-icon-button" md-menu-trigger>
-                <md-icon>list</md-icon>
-              </md-button>
-              <md-menu-content>
-                <md-menu-item v-on:selected="open_task(item)">
-                  <md-icon>open_in_browser</md-icon>
-                  <span>タスクを開く</span>
-                </md-menu-item>
-                <md-menu-item disabled>
-                  <md-icon>done_outline</md-icon>
-                  <span>タスクを完了にする</span>
-                </md-menu-item>
-                <md-menu-item disabled>
-                  <md-icon>edit</md-icon>
-                  <span>タスクのテキストを変更する</span>
-                </md-menu-item>
-                <md-menu-item disabled>
-                  <md-icon>remove_circle</md-icon>
-                  <span>タスクを削除する</span>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>
+          <div style="flex:0 0 30px;" class="mdc-menu-surface--anchor">
+            <button
+              class="material-icons"
+              v-on:click.stop="push_menu_open_button(item)"
+              v-bind:data-menu-id="item.id"
+            >list</button>
+            <div class="mdc-menu mdc-menu-surface">
+              <ul
+                class="mdc-list"
+                role="menu"
+                aria-hidden="true"
+                aria-orientation="vertical"
+              >
+                <li class="mdc-list-item" role="menuitem" v-on:click="open_task(item)">
+                  <span class="material-icons">open_in_browser</span>
+                  <span class="mdc-list-item__text">タスクを開く</span>
+                </li>
+                <li class="mdc-list-item" role="menuitem">
+                  <span class="material-icons">done_outline</span>
+                  <span class="mdc-list-item__text">タスクを完了にする</span>
+                </li>
+                <li class="mdc-list-item" role="menuitem">
+                  <span class="material-icons">edit</span>
+                  <span class="mdc-list-item__text">タスクのテキストを変更する</span>
+                </li>
+                <li class="mdc-list-item" role="menuitem">
+                  <span class="material-icons">remove_circle</span>
+                  <span class="mdc-list-item__text">タスクを削除する</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div style="display:flex;">
@@ -56,7 +59,12 @@
           </div>
           <div style="flex:0 0 auto;font-size:10px;">{{ item.dateAddedStr }}</div>
         </div>
-        <div v-if="0 < item.notes.length" style="padding:0 0px;" class="notes">
+        <div v-if="0 < item.notes.length && open_note_id.includes(item.id) == false"
+             v-on:click="open_note_id.push(item.id)"
+             style="background-color:#c5c5c5;color:black;padding:10px;display: flex;justify-content: center;align-items: center;border-radius: 0px 0px 30px 30px;">
+           <span class="material-icons">comment</span>コメント欄開く
+        </div>
+        <div v-if="0 < item.notes.length && open_note_id.includes(item.id) " style="padding:0 0px;" class="notes">
           <div
             v-for="noteItem in item.notes"
             :key="noteItem.id"
@@ -89,15 +97,7 @@
 <script lang="ts">
 import Vue from "vue";
 import dateformat from "dateformat";
-
-import { MdCore, MdButton, MdMenu, MdList, MdBackdrop, MdIcon } from 'vue-material'
-import 'vue-material/dist/vue-material.css'
-Vue.use(MdCore)
-Vue.use(MdButton)
-Vue.use(MdMenu)
-Vue.use(MdList)
-Vue.use(MdBackdrop)
-Vue.use(MdIcon)
+import { MDCMenu, Corner } from '@material/menu';
 
 function text2html(html: string) {
   // xssあり
@@ -120,7 +120,37 @@ function text2html(html: string) {
 
 export default Vue.extend({
   mounted: function () {
-    if(document.body.classList){
+    //@ts-ignore
+    /*
+    this.menuDom = this.$el.querySelector(".mdc-menu")!;
+    this.menuObj = new MDCMenu(this.menuDom);
+    this.menuDom.addEventListener("MDCMenuSurface:closed", () => {
+      this.pushMenuDom = null;
+    });
+    */
+    window.addEventListener("touchstart", (e: any) => {
+      //@ts-ignore
+      const path = e.path as HTMLElement[];
+      if (!path.includes(this.menuDom) && this.menuObj && this.menuObj.open) {
+        this.menuObj.open = false;
+        //@ts-ignore
+        //this.menuObj = null;
+        //@ts-ignore
+        //this.menuDom = null;
+      }
+    });
+    window.addEventListener("click", (e: MouseEvent) => {
+      //@ts-ignore
+      const path = e.path as HTMLElement[];
+      if (!path.includes(this.menuDom) && this.menuObj && this.menuObj.open) {
+        this.menuObj.open = false;
+        //@ts-ignore
+        //this.menuObj = null;
+        //@ts-ignore
+        //this.menuDom = null;
+      }
+    });
+    if (document.body.classList) {
       document.body.classList.remove("md-theme-default");
     }
     const colors = new Map([
@@ -194,7 +224,7 @@ export default Vue.extend({
           .sort((a: any, b: any) => {
             return b.dateAdded.getTime() - a.dateAdded.getTime();
           }).filter((a: any, index: number) => index < 1000);
-          this.reload_button_disabled = false;
+        this.reload_button_disabled = false;
       });
   },
   components: {
@@ -208,7 +238,12 @@ export default Vue.extend({
   data: function () {
     return {
       mockSwipeList: [],
-      reload_button_disabled:true
+      reload_button_disabled: true,
+      isMenuOpen: true,
+      menuObj: new Object() as MDCMenu,
+      menuDom: {} as HTMLElement,
+      pushMenuDom: null as null | HTMLElement,
+      open_note_id:[] as string[]
     };
   },
   computed: {
@@ -216,19 +251,41 @@ export default Vue.extend({
   },
   methods: {
     reloadData: function () { },
-    open_task:function(a:any){
-      window.open( `https://todoist.com/showTask?id=${a.id}` );
+    open_task: function (a: any) {
+      window.open(`https://todoist.com/showTask?id=${a.id}`);
     },
-    push_reload_button:function(){
+    push_reload_button: function () {
       this.reload_button_disabled = true;
       this.$mount();
+    },
+    push_menu_open_button: function (item: any) {
+      const pushButtonElement = this.$el.querySelector<HTMLElement>(`button[data-menu-id="${item.id}"]`)!
+      const rect = pushButtonElement.getBoundingClientRect() as DOMRect;
+      const menuElement = pushButtonElement.parentElement!.querySelector(".mdc-menu")!;
+      const a = new MDCMenu(menuElement);
+      a.setAnchorCorner(Corner.BOTTOM_LEFT);
+      a.setAnchorMargin({ left: -240 });
+      a.open = true;
+      //this.menuObj.setAbsolutePosition(rect.x, rect.y);
+      //this.menuObj.open = true;
+      //this.pushMenuDom = pushButtonElement;
+      //this.update_menu_position();
+    },
+    update_menu_position: function () {
+      if (this.pushMenuDom == null || this.menuObj.open == false) {
+        return;
+      }
+      const rect = this.pushMenuDom.getBoundingClientRect() as DOMRect;
+      this.menuObj.setAbsolutePosition(rect.x, rect.y);
+      requestAnimationFrame(() => {
+        this.update_menu_position();
+      })
     }
   },
   watch: {
   }
 });
 </script>
-
 <style lang="scss" scoped>
 * {
   box-sizing: border-box;
@@ -252,4 +309,31 @@ export default Vue.extend({
 .tasklist /deep/ .notes > div:nth-child(odd) {
   background-color: #e0e0e0;
 }
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: "liga";
+}
+@import "@material/list/mdc-list";
+@import "@material/menu-surface/mdc-menu-surface";
+@import "@material/menu/mdc-menu";
 </style>

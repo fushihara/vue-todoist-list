@@ -10,6 +10,4 @@ declare module '*.svg' {
   const content: any;
   export default content;
 }
-declare module 'vue-swipe-actions';
-declare module 'vue-material/dist/components';
-declare module 'vue-material';
+declare module '@material/menu';
