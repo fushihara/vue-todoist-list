@@ -1,6 +1,13 @@
 module.exports = {
   css: {
     extract: false,
+    loaderOptions: {
+      sass: {
+        // vueファイルのstyleタグの中で @import "modulename/path";する為の表記。
+        // この書き方だと、node_modules/modulename/path.css 同 path.scss 同 _path.scss を読み込んでくれる。
+        includePaths: ['node_modules']
+      }
+    }
   },
   filenameHashing: false,
   configureWebpack: {
