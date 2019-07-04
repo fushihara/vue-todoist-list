@@ -8,3 +8,8 @@ todoistの一覧を表示するvueコンポーネント。apiはv8。とりあ�
     - https://google.github.io/material-design-icons/
     - https://material.io/tools/icons/?icon=assignment_turned_in&style=baseline
 - メニューに https://github.com/material-components/material-components-web を使用しています。
+
+# changelog
+
+- 1.1
+  - メニュー用のUIライブラリを変更してモジュール外のスタイルシートに影響が出ないように修正
