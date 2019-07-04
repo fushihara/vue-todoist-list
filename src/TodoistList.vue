@@ -29,15 +29,15 @@
                   <span class="material-icons">open_in_browser</span>
                   <span class="mdc-list-item__text">タスクを開く</span>
                 </li>
-                <li class="mdc-list-item" role="menuitem">
+                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
                   <span class="material-icons">done_outline</span>
                   <span class="mdc-list-item__text">タスクを完了にする</span>
                 </li>
-                <li class="mdc-list-item" role="menuitem">
+                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
                   <span class="material-icons">edit</span>
                   <span class="mdc-list-item__text">タスクのテキストを変更する</span>
                 </li>
-                <li class="mdc-list-item" role="menuitem">
+                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
                   <span class="material-icons">remove_circle</span>
                   <span class="mdc-list-item__text">タスクを削除する</span>
                 </li>
@@ -120,39 +120,6 @@ function text2html(html: string) {
 
 export default Vue.extend({
   mounted: function () {
-    //@ts-ignore
-    /*
-    this.menuDom = this.$el.querySelector(".mdc-menu")!;
-    this.menuObj = new MDCMenu(this.menuDom);
-    this.menuDom.addEventListener("MDCMenuSurface:closed", () => {
-      this.pushMenuDom = null;
-    });
-    */
-    window.addEventListener("touchstart", (e: any) => {
-      //@ts-ignore
-      const path = e.path as HTMLElement[];
-      if (!path.includes(this.menuDom) && this.menuObj && this.menuObj.open) {
-        this.menuObj.open = false;
-        //@ts-ignore
-        //this.menuObj = null;
-        //@ts-ignore
-        //this.menuDom = null;
-      }
-    });
-    window.addEventListener("click", (e: MouseEvent) => {
-      //@ts-ignore
-      const path = e.path as HTMLElement[];
-      if (!path.includes(this.menuDom) && this.menuObj && this.menuObj.open) {
-        this.menuObj.open = false;
-        //@ts-ignore
-        //this.menuObj = null;
-        //@ts-ignore
-        //this.menuDom = null;
-      }
-    });
-    if (document.body.classList) {
-      document.body.classList.remove("md-theme-default");
-    }
     const colors = new Map([
       [30, "#b8256f"],
       [31, "#db4035"],
@@ -240,7 +207,7 @@ export default Vue.extend({
       mockSwipeList: [],
       reload_button_disabled: true,
       isMenuOpen: true,
-      menuObj: new Object() as MDCMenu,
+      menuObj: null as MDCMenu|null,
       menuDom: {} as HTMLElement,
       pushMenuDom: null as null | HTMLElement,
       open_note_id:[] as string[]
@@ -259,27 +226,17 @@ export default Vue.extend({
       this.$mount();
     },
     push_menu_open_button: function (item: any) {
+      if(this.menuObj){
+        this.menuObj.open = false;
+        this.menuObj = null;
+      }
       const pushButtonElement = this.$el.querySelector<HTMLElement>(`button[data-menu-id="${item.id}"]`)!
-      const rect = pushButtonElement.getBoundingClientRect() as DOMRect;
       const menuElement = pushButtonElement.parentElement!.querySelector(".mdc-menu")!;
       const a = new MDCMenu(menuElement);
       a.setAnchorCorner(Corner.BOTTOM_LEFT);
       a.setAnchorMargin({ left: -240 });
       a.open = true;
-      //this.menuObj.setAbsolutePosition(rect.x, rect.y);
-      //this.menuObj.open = true;
-      //this.pushMenuDom = pushButtonElement;
-      //this.update_menu_position();
-    },
-    update_menu_position: function () {
-      if (this.pushMenuDom == null || this.menuObj.open == false) {
-        return;
-      }
-      const rect = this.pushMenuDom.getBoundingClientRect() as DOMRect;
-      this.menuObj.setAbsolutePosition(rect.x, rect.y);
-      requestAnimationFrame(() => {
-        this.update_menu_position();
-      })
+      this.menuObj = a;
     }
   },
   watch: {
@@ -303,10 +260,10 @@ export default Vue.extend({
 .tasklist > div:last-child {
   border-bottom: 0;
 }
-.tasklist /deep/ .notes > div:nth-child(even) {
+.tasklist .notes > div:nth-child(even) {
   background-color: #f0f0f0;
 }
-.tasklist /deep/ .notes > div:nth-child(odd) {
+.tasklist .notes > div:nth-child(odd) {
   background-color: #e0e0e0;
 }
 .material-icons {
