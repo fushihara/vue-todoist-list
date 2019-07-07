@@ -65,8 +65,8 @@ module.exports = {
   },
   pages: {
     index: {
-      entry: "src/index.ts",
-      template: "src/index.html",
+      entry: "src/app-entry/index.ts",
+      template: "src/app-entry/index.html",
       filename: "index.html",
     }
   },
