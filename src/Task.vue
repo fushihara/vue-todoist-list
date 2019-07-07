@@ -44,7 +44,13 @@
           rel="noopener noreferrer nofollow"
         >{{value.project.name}}</a>
       </div>
-      <div style="flex:0 0 auto;font-size:10px;">{{ format_date(value.dateAdded) }}</div>
+      <div style="flex:0 0 auto;font-size:10px;">
+        <a
+          v-bind:href="`https://todoist.com/showTask?id=${value.id}`"
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+        >{{ format_date(value.dateAdded) }}</a>
+      </div>
     </div>
     <div
       v-if="0 < value.notes.length && isNoteOpen == false"
