@@ -1,6 +1,6 @@
 {
   "name": "@fushihara/vue-todoist-list",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "",
   "main": "build-result/dev-lib-vue/vue-todoist-list.umd.js",
   "scripts": {
