@@ -3,14 +3,22 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <div style="display:flex;flex:0 0 auto;">
       <div style="flex:1 1 0;"></div>
-      <select  v-model="flex_styles.activeStyle" style="height:100%;">
-        <option v-for="(item) in flex_styles.options" :key="item.class" v-bind:value="item">
-          {{item.label}}
-        </option>
+      <select v-model="flex_styles.activeStyle" style="height:100%;">
+        <option
+          v-for="(item) in flex_styles.options"
+          :key="item.class"
+          v-bind:value="item"
+        >{{item.label}}</option>
       </select>
       <button v-on:click="push_reload_button" v-bind:disabled="reload_button_disabled">再読込</button>
     </div>
-    <div class="tasklist h-w100" style="flex:1 1 0;" v-bind:class="flex_styles.className" @wheel="listWheelEvent" data-is-scroll-parent>
+    <div
+      class="tasklist h-w100"
+      style="flex:1 1 0;"
+      v-bind:class="flex_styles.className"
+      @wheel="listWheelEvent"
+      data-is-scroll-parent
+    >
       <div v-for="(item) in itemList" :key="item.id" style="display:flex;flex-direction:column;">
         <div style="display:flex;">
           <h2 style="flex:1 1 0;" v-html="text2html(item.content)"></h2>
@@ -141,7 +149,6 @@ export default Vue.extend({
     listUlClass: function () { }
   },
   methods: {
-    reloadData: function () { },
     format_date: function (date: Date) {
       dateformat.i18n.dayNames = [
         '日', '月', '火', '水', '木', '金', '土',
@@ -172,7 +179,7 @@ export default Vue.extend({
       a.open = true;
       this.menuObj = a;
     },
-     listWheelEvent: function (event: WheelEvent) {
+    listWheelEvent: function (event: WheelEvent) {
       if (false) {
         // trueの時、このエレメントのスクロールは実行されない
         event.stopPropagation();
