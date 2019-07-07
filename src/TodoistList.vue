@@ -1,43 +1,51 @@
 <template>
   <div style="height:100%;display:flex;flex-direction:column;background-color:white;">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <div style="flex:0 0 auto;">
+    <div style="display:flex;flex:0 0 auto;">
+      <div style="flex:1 1 0;"></div>
+      <select  v-model="flex_styles.activeStyle" style="height:100%;">
+        <option v-for="(item) in flex_styles.options" :key="item.class" v-bind:value="item">
+          {{item.label}}
+        </option>
+      </select>
       <button v-on:click="push_reload_button" v-bind:disabled="reload_button_disabled">再読込</button>
     </div>
-    <div class="tasklist v-w1_1" style="flex:1 1 0;">
+    <div class="tasklist h-w100" style="flex:1 1 0;" v-bind:class="flex_styles.className" @wheel="listWheelEvent" data-is-scroll-parent>
       <div v-for="(item) in itemList" :key="item.id" style="display:flex;flex-direction:column;">
         <div style="display:flex;">
           <h2 style="flex:1 1 0;" v-html="text2html(item.content)"></h2>
-          <div style="flex:0 0 30px;" class="mdc-menu-surface--anchor">
-            <button
-              class="material-icons"
-              v-on:click.stop="push_menu_open_button(item)"
-              v-bind:data-menu-id="item.id"
-            >list</button>
-            <div class="mdc-menu mdc-menu-surface">
-              <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-                <li class="mdc-list-item" role="menuitem" v-on:click="open_task(item)">
-                  <span class="material-icons">open_in_browser</span>
-                  <span class="mdc-list-item__text">タスクを開く</span>
-                </li>
-                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
-                  <span class="material-icons">done_outline</span>
-                  <span class="mdc-list-item__text">タスクを完了にする</span>
-                </li>
-                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
-                  <span class="material-icons">edit</span>
-                  <span class="mdc-list-item__text">タスクのテキストを変更する</span>
-                </li>
-                <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
-                  <span class="material-icons">remove_circle</span>
-                  <span class="mdc-list-item__text">タスクを削除する</span>
-                </li>
-              </ul>
+          <div style="flex:0 0 30px;">
+            <div class="mdc-menu-surface--anchor">
+              <button
+                class="material-icons"
+                v-on:click.stop="push_menu_open_button(item)"
+                v-bind:data-menu-id="item.id"
+              >list</button>
+              <div class="mdc-menu mdc-menu-surface">
+                <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
+                  <li class="mdc-list-item" role="menuitem" v-on:click="open_task(item)">
+                    <span class="material-icons">open_in_browser</span>
+                    <span class="mdc-list-item__text">タスクを開く</span>
+                  </li>
+                  <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+                    <span class="material-icons">done_outline</span>
+                    <span class="mdc-list-item__text">タスクを完了にする</span>
+                  </li>
+                  <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+                    <span class="material-icons">edit</span>
+                    <span class="mdc-list-item__text">タスクのテキストを変更する</span>
+                  </li>
+                  <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+                    <span class="material-icons">remove_circle</span>
+                    <span class="mdc-list-item__text">タスクを削除する</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
         <div style="display:flex;">
-          <div style="flex:1 1 0;display:flex;align-items: center;">
+          <div style="flex:1 1 0;display:flex;align-items: center;font-size:10px;">
             <div
               style="width:10px;height:10px;border-radius:10px;margin:0 5px;"
               v-bind:style="{backgroundColor:item.project.color}"
@@ -96,8 +104,8 @@ import Vue from "vue";
 import dateformat from "dateformat";
 import { MDCMenu, Corner } from '@material/menu';
 import { TodoistApi } from "./TodoistApi"
-import { TextLink } from "./TextLink"
-
+import { TextLink } from "./TextLink";
+import { FlexStyles } from "./FlexStyles";
 
 export default Vue.extend({
   mounted: function () {
@@ -125,7 +133,8 @@ export default Vue.extend({
       itemList: [] as TodoistApi.Item[],
       reload_button_disabled: true,
       menuObj: null as MDCMenu | null,
-      open_note_id: [] as string[]
+      open_note_id: [] as string[],
+      flex_styles: new FlexStyles(),
     };
   },
   computed: {
@@ -162,6 +171,18 @@ export default Vue.extend({
       a.setAnchorMargin({ left: -240 });
       a.open = true;
       this.menuObj = a;
+    },
+     listWheelEvent: function (event: WheelEvent) {
+      if (false) {
+        // trueの時、このエレメントのスクロールは実行されない
+        event.stopPropagation();
+        return;
+      }
+      if (this.flex_styles.isHorizonalScroll) {
+        const el = this.$el.querySelector<HTMLLIElement>("[data-is-scroll-parent]")!;
+        el.scrollLeft += event.deltaY / 2;
+        event.preventDefault();
+      }
     }
   },
   watch: {
@@ -173,45 +194,66 @@ export default Vue.extend({
   box-sizing: border-box;
   word-break: break-all;
 }
-.tasklist{
-  &.v-w1_1{
+.tasklist {
+  > div {
+    border-right: solid 2px #bbb;
+  }
+  &.v-w1_1,
+  &.v-w1_2,
+  &.v-w1_3,
+  &.v-w1_4,
+  &.v-w1_5,
+  &.v-w1_6 {
     /* 縦にスクロールする。横幅100% */
-    overflow-y:scroll;
+    overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    >div{
-      flex:0 0 calc( 100% / 1 );
-      border-right: solid 2px #bbb;
-    }
   }
-  &.v-w1_3{
-    /* 縦にスクロールする。横幅33% */
-    overflow-y:scroll;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    >div{
-      flex:0 0 calc( 100% / 3 );
-      border-right: solid 2px #bbb;
-    }
+  &.v-w1_1 > div {
+    flex: 0 0 calc(100% / 1);
   }
-  &.h-w100{
+  &.v-w1_2 > div {
+    flex: 0 0 calc(100% / 2);
+  }
+  &.v-w1_3 > div {
+    flex: 0 0 calc(100% / 3);
+  }
+  &.v-w1_4 > div {
+    flex: 0 0 calc(100% / 4);
+  }
+  &.v-w1_5 > div {
+    flex: 0 0 calc(100% / 5);
+  }
+  &.v-w1_6 > div {
+    flex: 0 0 calc(100% / 6);
+  }
+  &.h-w250,
+  &.h-w300,
+  &.h-w400,
+  &.h-w500 {
     /* 横にスクロールする。横幅200 */
-    overflow-y:scroll;
+    overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    >div{
-      flex:0 0 100px;
-      width:250px;
-      border-right: solid 2px #bbb;
-    }
+  }
+  &.h-w250 > div {
+    width: 250px;
+  }
+  &.h-w300 > div {
+    width: 300px;
+  }
+  &.h-w400 > div {
+    width: 400px;
+  }
+  &.h-w500 > div {
+    width: 500px;
   }
 }
 .tasklist h2 {
   margin: 0;
-  font-size: 100%;
+  font-size: 12px;
   font-weight: normal;
   word-break: break-all;
 }
