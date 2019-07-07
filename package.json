@@ -5,7 +5,7 @@
   "main": "build-result/dev-lib-vue/vue-todoist-list.umd.js",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build:dev-lib-vue": "vue-cli-service build --target lib --mode development --name VueTodoistList   --filename vue-todoist-list --dest \"./build-result/dev-lib-vue\" \"./src/TodoistList.vue\"",
+    "build:dev-lib-vue": "vue-cli-service build --target lib --mode development --name VueTodoistList   --filename vue-todoist-list --dest \"./build-result/dev-lib-vue\" \"./src/index.vue\"",
     "build:dev": "npm run build:dev-lib-vue",
     "build": "npm run build:dev"
   },
