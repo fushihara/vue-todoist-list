@@ -4,7 +4,7 @@
     <div style="flex:0 0 auto;">
       <button v-on:click="push_reload_button" v-bind:disabled="reload_button_disabled">再読込</button>
     </div>
-    <div class="tasklist" style="flex:1 1 0;overflow-y:scroll;">
+    <div class="tasklist v-w1_1" style="flex:1 1 0;">
       <div v-for="(item) in itemList" :key="item.id" style="display:flex;flex-direction:column;">
         <div style="display:flex;">
           <h2 style="flex:1 1 0;" v-html="text2html(item.content)"></h2>
@@ -172,6 +172,42 @@ export default Vue.extend({
 * {
   box-sizing: border-box;
   word-break: break-all;
+}
+.tasklist{
+  &.v-w1_1{
+    /* 縦にスクロールする。横幅100% */
+    overflow-y:scroll;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    >div{
+      flex:0 0 calc( 100% / 1 );
+      border-right: solid 2px #bbb;
+    }
+  }
+  &.v-w1_3{
+    /* 縦にスクロールする。横幅33% */
+    overflow-y:scroll;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    >div{
+      flex:0 0 calc( 100% / 3 );
+      border-right: solid 2px #bbb;
+    }
+  }
+  &.h-w100{
+    /* 横にスクロールする。横幅200 */
+    overflow-y:scroll;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    >div{
+      flex:0 0 100px;
+      width:250px;
+      border-right: solid 2px #bbb;
+    }
+  }
 }
 .tasklist h2 {
   margin: 0;
