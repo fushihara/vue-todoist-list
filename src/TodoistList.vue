@@ -96,6 +96,7 @@ import Vue from "vue";
 import dateformat from "dateformat";
 import { MDCMenu, Corner } from '@material/menu';
 import { TodoistApi } from "./TodoistApi"
+import { TextLink } from "./TextLink"
 
 
 export default Vue.extend({
@@ -140,32 +141,7 @@ export default Vue.extend({
       return dateformat(date, "yyyy/mm/dd(ddd)HH:MM:ss");
     },
     text2html: function (html: string) {
-      html = html.replace(
-        /(.?)(https?:\/\/\S+)(\S)/g,
-        (matchAll: string, m1: string, m2: string, m3: string) => {
-          const kakkos = new Map([["[", "]"], ["(", ")"], ["<", ">"], ["{", "}"]]);
-          // m1がkakkosの中に当てはまるかどうかチェック
-          let head = "", tail = "", url = "", a = "";
-          if (kakkos.get(m1) === m3) {
-            head = m1;
-            url = m2;
-            a = m2;
-            tail = m3;
-          } else {
-            head = m1;
-            url = m2 + m3;
-            a = m2 + m3;
-            tail = "";
-          }
-          url = url.replace(/"/g,""); // あり得ないはずなので消す
-          head = head.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-          a = a.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-          tail = tail.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-          return `${head}<a href="${url}" rel="noopener noreferrer nofollow" target="_blank">${a}</a>${tail}`;
-        }
-      );
-      html = html.replace(/\n/g, "<br>");
-      return html;
+      return TextLink.format(html);
     },
     open_task: function (a: any) {
       window.open(`https://todoist.com/showTask?id=${a.id}`);
