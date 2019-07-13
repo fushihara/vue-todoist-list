@@ -1,3 +1,17 @@
+  [![NPM Version][npm-version-image]][npm-site-url]
+  [![NPM Downloads][downloads-image]][npm-site-url]
+  [![NPM Minzip Size][npm-minzip-filesize]][npm-site-url]
+  [![License][license-image]][npm-site-url]
+  [![last commit date][last-commit-date-image]][npm-site-url]
+
+<!--URL定義一覧 -->
+[npm-site-url]: https://npmjs.org/package/@fushihara/vue-todoist-list
+[npm-version-image]: https://img.shields.io/npm/v/@fushihara/vue-todoist-list.svg
+[downloads-image]: https://img.shields.io/npm/dm/@fushihara/vue-todoist-list.svg
+[npm-minzip-filesize]: https://img.shields.io/bundlephobia/minzip/@fushihara/vue-todoist-list.svg
+[license-image]: https://img.shields.io/npm/l/@fushihara/vue-todoist-list.svg
+[last-commit-date-image]: https://img.shields.io/github/last-commit/fushihara/vue-online-document-list.svg
+
 # about
 todoistの一覧を表示するvueコンポーネント。apiはv8。とりあえず動く。
 
