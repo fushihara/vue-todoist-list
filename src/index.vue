@@ -33,8 +33,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { TodoistApi } from "./TodoistApi"
-import { FlexStyles } from "./FlexStyles";
+import { TodoistApi } from "./utils/TodoistApi"
+import { FlexStyles } from "./utils/FlexStyles";
 import VueTask from "./Task.vue";
 
 export default Vue.extend({

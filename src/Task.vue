@@ -91,7 +91,7 @@
 import Vue from "vue";
 import dateformat from "dateformat";
 import { MDCMenu, Corner } from '@material/menu';
-import { TextLink } from "./TextLink";
+import { TextLink } from "./utils/TextLink";
 
 export default Vue.extend({
   mounted: function () {
