@@ -6,6 +6,7 @@
         <div class="mdc-menu-surface--anchor">
           <button
             class="material-icons"
+            style="color: #00000047;"
             v-on:click.stop="push_menu_open_button(value)"
             v-bind:data-menu-id="value.id"
           >list</button>
@@ -33,15 +34,17 @@
       </div>
     </div>
     <div style="display:flex;">
-      <div style="flex:1 1 0;display:flex;align-items: center;font-size:10px;">
+      <div style="flex:1 1 0;display:flex;align-items: center;font-size:10px;overflow: hidden;">
         <div
-          style="width:10px;height:10px;border-radius:10px;margin:0 5px;"
+          style="width:10px;height:10px;border-radius:10px;margin:0 5px;flex: 0 0 10px;"
           v-bind:style="{backgroundColor:value.project.color}"
         ></div>
         <a
+          style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
           v-bind:href="value.project.link"
           target="_blank"
           rel="noopener noreferrer nofollow"
+          v-bind:title="value.project.name"
         >{{value.project.name}}</a>
       </div>
       <div style="flex:0 0 auto;font-size:10px;">
@@ -166,6 +169,8 @@ h2 {
 }
 
 .material-icons {
+  background: transparent;
+  border: transparent;
   font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
