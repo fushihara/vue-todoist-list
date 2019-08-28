@@ -1,4 +1,18 @@
+import uuidV1 from "uuid/v1";
+
 export namespace TodoistApi {
+  export function createNewItem(token: string, content: string, projectId: number) {
+    const result = TodoistApi.v8.newItem(token, content, projectId);
+    return result;
+  }
+  export function updateItem(token: string, itemId: number, content: string) {
+    const result = TodoistApi.v8.updateItem(token, itemId, content);
+    return result;
+  }
+  export function archiveItem(token: string, itemId: number) {
+    const result = TodoistApi.v8.itemArchive(token, itemId);
+    return result;
+  }
   export function sync(token: string): Promise<SyncResult> {
     const result = TodoistApi.v8.sync(token, ["all"] /* ["items", "labels", "notes", "projects"] */, "*").then(data => {
       if (!data.items) { throw new Error("itemsがありません"); }
@@ -98,13 +112,15 @@ export namespace TodoistApi {
         };
       });
       return {
-        items: items
+        items: items,
+        projects
       };
     });
     return result;
   }
   export type SyncResult = {
-    items: Item[]
+    items: Item[],
+    projects: Project[]
   };
   export type Item = {
     project: Project,
@@ -253,6 +269,55 @@ export namespace TodoistApi {
       [48, "#b8b8b8"],
       [49, "#ccac93"]
     ]);
+    export function newItem(token: string, content: string, projectId: number): Promise<{ newItemid: number }> {
+      const uuid = uuidV1();
+      const tempId = uuidV1();
+      return fetch("https://todoist.com/api/v8/sync", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: [
+          ["token", token],
+          ["commands", JSON.stringify([{ "type": "item_add", "temp_id": tempId, "uuid": uuid, "args": { "content": content, "project_id": projectId } }])]
+        ]
+          .map(a => `${a[0]}=${encodeURIComponent(a[1])}`)
+          .join("&")
+      }).then(response => response.json().then(json => {
+        const result = String(json.sync_status[uuid]);
+        const newItemId = Number(json.temp_id_mapping[tempId]);
+        if (result == "ok") {
+          return { newItemid: newItemId };
+        } else {
+          throw new Error("");
+        }
+      }));
+    }
+    export function updateItem(token: string, itemId: number, content: string) {
+      return fetch("https://todoist.com/api/v8/sync", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: [
+          ["token", token],
+          ["commands", JSON.stringify([{ "type": "item_update", "uuid": uuidV1(), "args": { "id": Number(itemId), "content": content } }])]
+        ]
+          .map(a => `${a[0]}=${encodeURIComponent(a[1])}`)
+          .join("&")
+      }).then(response => response.json());
+    }
+    export function itemArchive(token: string, itemId: number) {
+      return fetch("https://todoist.com/api/v8/sync", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: [
+          ["token", token],
+          ["commands", JSON.stringify([{ "type": "item_complete", "uuid": uuidV1(), "args": { "id": Number(itemId) } }])]
+        ]
+          .map(a => `${a[0]}=${encodeURIComponent(a[1])}`)
+          .join("&")
+      }).then(response => response.json());
+    }
     export function sync(token: string, resource_types: ResourceType[], sync_token: string = "*"): Promise<Type.SyncResult> {
       return fetch("https://todoist.com/api/v8/sync", {
         method: "POST",

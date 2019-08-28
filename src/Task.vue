@@ -16,15 +16,15 @@
                 <span class="material-icons">open_in_browser</span>
                 <span class="mdc-list-item__text">タスクを開く</span>
               </li>
-              <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+              <li class="mdc-list-item" role="menuitem" v-on:click="emit('change-complete',value)">
                 <span class="material-icons">done_outline</span>
                 <span class="mdc-list-item__text">タスクを完了にする</span>
               </li>
-              <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+              <li class="mdc-list-item" role="menuitem" v-on:click="emit('edit-task',value)">
                 <span class="material-icons">edit</span>
                 <span class="mdc-list-item__text">タスクのテキストを変更する</span>
               </li>
-              <li class="mdc-list-item" role="menuitem" style="opacity:0.5;">
+              <li class="mdc-list-item" role="menuitem" v-on:click="emit('delete-task',value)">
                 <span class="material-icons">remove_circle</span>
                 <span class="mdc-list-item__text">タスクを削除する</span>
               </li>
@@ -125,6 +125,9 @@ export default Vue.extend({
     },
     open_task: function (a: any) {
       window.open(`https://todoist.com/showTask?id=${a.id}`);
+    },
+    emit: function (eventType: string, item: any) {
+      this.$emit(eventType, this.value.id);
     },
     need_close_menu: function (withoutId: number) {
       if (withoutId === this.value.id) {
