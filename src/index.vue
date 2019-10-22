@@ -281,7 +281,7 @@ export default Vue.extend({
   border-bottom: 0;
 }
 .el-dialog__wrapper /deep/ .el-dialog {
-  width: 90%;
+  max-width: 600px;
 }
 .el-dialog__wrapper /deep/ .el-dialog__body {
   padding: 10px 10px;
