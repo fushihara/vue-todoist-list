@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-bind:title="title" :visible.sync="value.dialogFormVisible">
+  <el-dialog v-bind:title="title" :visible.sync="value.dialogFormVisible" :append-to-body="true">
     <el-form :model="form" label-position="top">
       <el-form-item label="本文" :label-width="formLabelWidth">
         <el-input
