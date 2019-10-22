@@ -207,7 +207,7 @@ export default Vue.extend({
       return TodoistApi.createNewItem(this.todoistApiKey, content, projectId);
     },
     onDeleteTask: function (eventId: string) {
-      alert(`${eventId} のタスクを削除`);
+      alert(`${eventId} のタスクを削除。(開発中)`);
     },
   },
   watch: {
