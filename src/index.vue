@@ -35,7 +35,7 @@
       ></vue-task>
     </div>
     <task-dialog v-bind:value="taskDialogModel" v-on:save="fireTaskEditComplete"></task-dialog>
-    <el-dialog title="タスク完了ダイアログ" :visible.sync="taskCompleteDialog.dialogFormVisible">
+    <el-dialog title="タスク完了ダイアログ" :visible.sync="taskCompleteDialog.dialogFormVisible" :append-to-body="true">
       <span>{{taskCompleteDialog.bodyText}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="taskCompleteDialog.dialogFormVisible = false">取り消し</el-button>
