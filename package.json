@@ -18,7 +18,7 @@
     "access": "public"
   },
   "repository": "github:fushihara/vue-todoist-list",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "peerDependencies": {
     "vue": "^2.6.10"
   },
