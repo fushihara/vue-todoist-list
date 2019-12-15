@@ -1,7 +1,14 @@
 <template>
   <div>
     <div style="display:flex;">
-      <h2 style="flex:1 1 0;" v-html="text2html(value.content)"></h2>
+      <h2 style="flex:1 1 0;">
+        <div v-html="text2html(value.content)"></div>
+        <div v-if="isNoteOpen == false">
+          <a v-for="file in attachmentFiles" v-bind:key="file.src" v-bind:href="file.src">
+            <img v-bind:src="file.src" style="object-fit: contain;height: 100px;width: 100px;" />
+          </a>
+        </div>
+      </h2>
       <div style="flex:0 0 30px;">
         <div class="mdc-menu-surface--anchor">
           <button
@@ -101,10 +108,28 @@ export default Vue.extend({
     value: Object
   },
   data() {
+    if (this.value.notes && 0 < this.value.notes.length) {
+      console.log(this.value.notes);
+    }
     return {
       menuObj: null as MDCMenu | null,
       isNoteOpen: false as boolean
     };
+  },
+  computed: {
+    attachmentFiles(): { src: string }[] {
+      if (!this.value.notes || this.value.notes.length == 0) { return []; }
+      return this.value.notes.filter((note: any) => {
+        if (!note.file_attachment) { return false; }
+        if (note.file_attachment.resource_type != "image") { return false; }
+        if (note.file_attachment.upload_state != "completed") { return false; }
+        return true;
+      }).map((note: any) => {
+        return {
+          src: String(note.file_attachment.file_url || "")
+        }
+      });
+    }
   },
   methods: {
     format_date(date: Date): string {
@@ -142,7 +167,7 @@ export default Vue.extend({
       a.open = true;
       this.menuObj = a;
     },
-    noteOpenClick(){
+    noteOpenClick() {
       this.isNoteOpen = true;
     }
   },
