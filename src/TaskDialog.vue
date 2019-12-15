@@ -37,14 +37,10 @@ import { TextLink } from "./utils/TextLink";
 import { TaskDialogPropsType } from "./d.ts/TaskDialog"
 
 export default Vue.extend({
-  mounted: function () {
-  },
-  components: {
-  },
   props: {
     value: Object as PropType<TaskDialogPropsType>
   },
-  data: function () {
+  data(){
     return {
       dialogFormVisible: false,
       form: {
@@ -61,19 +57,17 @@ export default Vue.extend({
     };
   },
   computed: {
-    title: function () {
+    title():string {
       return (this.value as TaskDialogPropsType).taskId === null ? "タスクを新規追加" : "タスクを編集"
     },
-    projectDisable:function(){
+    projectDisable():boolean{
       return (this.value as TaskDialogPropsType).taskId !== null
     }
   },
   methods: {
-    onSaveClose: function (a: any) {
+    onSaveClose(){
       this.$emit("save");
     },
-  },
-  watch: {
   }
 });
 </script>
