@@ -57,7 +57,7 @@
     </div>
     <div
       v-if="0 < value.notes.length && isNoteOpen == false"
-      v-on:click="isNoteOpen = true"
+      v-on:click="noteOpenClick"
       style="background-color:#c5c5c5;color:black;padding:10px;display: flex;justify-content: center;align-items: center;border-radius: 0px 0px 30px 30px;"
     >
       <span class="material-icons">comment</span>コメント欄開く
@@ -91,45 +91,39 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import dateformat from "dateformat";
 import { MDCMenu, Corner } from '@material/menu';
 import { TextLink } from "./utils/TextLink";
 
 export default Vue.extend({
-  mounted: function () {
-  },
-  components: {
-  },
   props: {
     value: Object
   },
-  data: function () {
+  data() {
     return {
       menuObj: null as MDCMenu | null,
-      isNoteOpen: false
+      isNoteOpen: false as boolean
     };
   },
-  computed: {
-  },
   methods: {
-    format_date: function (date: Date) {
+    format_date(date: Date): string {
       dateformat.i18n.dayNames = [
         '日', '月', '火', '水', '木', '金', '土',
         '日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'
       ];
       return dateformat(date, "yyyy/mm/dd(ddd)HH:MM:ss");
     },
-    text2html: function (html: string) {
+    text2html(html: string): string {
       return TextLink.format(html);
     },
-    open_task: function (a: any) {
+    open_task(a: any): void {
       window.open(`https://todoist.com/showTask?id=${a.id}`);
     },
-    emit: function (eventType: string, item: any) {
+    emit(eventType: string, item: any): void {
       this.$emit(eventType, this.value.id);
     },
-    need_close_menu: function (withoutId: number) {
+    need_close_menu(withoutId: number): void {
       if (withoutId === this.value.id) {
         return;
       }
@@ -138,7 +132,7 @@ export default Vue.extend({
         this.menuObj = null;
       }
     },
-    push_menu_open_button: function (item: any) {
+    push_menu_open_button(item: any): void {
       this.$emit("open-menu", this.value.id);
       const pushButtonElement = this.$el.querySelector<HTMLElement>(`button[data-menu-id="${item.id}"]`)!
       const menuElement = pushButtonElement.parentElement!.querySelector(".mdc-menu")!;
@@ -148,9 +142,10 @@ export default Vue.extend({
       a.open = true;
       this.menuObj = a;
     },
+    noteOpenClick(){
+      this.isNoteOpen = true;
+    }
   },
-  watch: {
-  }
 });
 </script>
 <style lang="scss" scoped>
